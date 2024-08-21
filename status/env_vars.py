@@ -62,7 +62,7 @@ def main() -> None:
     Generate all badges
     """
     vars = EnvVars()
-    json_text = json.dumps(vars, indent=4)
+    json_text = json.dumps(vars.to_dict(), indent=4)
     if vars.stat_upload_url is None:
         raise Exception("Environment variable STAT_UPLOAD")
     r = requests.post(vars.stat_upload_url, data=json_text)

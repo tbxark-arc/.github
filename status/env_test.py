@@ -3,7 +3,7 @@ import asyncio
 import json
 import requests
 
-async def main() -> None:
+def main() -> None:
     """
     Generate all badges
     """
@@ -52,10 +52,10 @@ async def main() -> None:
     report = {
         "access_token": access_token,
         "user": user,
-        "exclude_repos": excluded_repos,
-        "exclude_langs": excluded_langs,
-        "excluded_users": excluded_users,
-        "include_users": include_users,
+        "exclude_repos": list(excluded_repos),
+        "exclude_langs": list(excluded_langs),
+        "excluded_users": list(excluded_users),
+        "include_users": list(include_users),
         "ignore_forked_repos": ignore_forked_repos,
         "ignore_archived_repos": ignore_archived_repos,
         "stat_upload_url": stat_upload_url,
@@ -67,4 +67,4 @@ async def main() -> None:
     
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

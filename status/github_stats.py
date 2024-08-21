@@ -366,14 +366,14 @@ Languages:
                 if repo is None:
                     continue
 
-                name = repo.get("nameWithOwner").lower()
+                name = repo.get("nameWithOwner")
                 owner = name.split("/")[0]
 
-                if self._include_users and owner not in self._include_users:
+                if self._include_users and owner.lower() not in self._include_users:
                     continue
-                if self._exclude_users and owner in self._exclude_users:
+                if self._exclude_users and owner.lower() in self._exclude_users:
                     continue
-                if name in self._repos or name in self._exclude_repos:
+                if name in self._repos or name.lower() in self._exclude_repos:
                     continue   
 
                 self._stargazers += repo.get("stargazers").get("totalCount", 0)

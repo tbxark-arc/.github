@@ -8,9 +8,9 @@ class EnvVars:
         if not self.access_token:
             raise Exception("A personal access token is required to proceed!")
         self.user = os.getenv("CUSTOM_ACTOR")
-        if user is None:
+        if self.user is None:
             user = os.getenv("GITHUB_ACTOR")
-        if user is None:
+        if self.user is None:
             raise RuntimeError("Environment variable CUSTOM_ACTOR must be set.")
         exclude_repos = os.getenv("EXCLUDED")
         self.excluded_repos = (
@@ -47,10 +47,10 @@ class EnvVars:
         return {
             "access_token": self.access_token,
             "user": self.user,
-            "exclude_repos": list(self.excluded_repos),
-            "exclude_langs": list(self.excluded_langs),
-            "excluded_users": list(self.excluded_users),
-            "include_users": list(self.included_users),
+            "exclude_repos": list(self.excluded_repos) if self.excluded_repos else None,
+            "exclude_langs": list(self.excluded_langs) if self.excluded_langs else None,
+            "excluded_users": list(self.excluded_users) if self.excluded_users else None,
+            "include_users": list(self.included_users) if self.included_users else None,
             "ignore_forked_repos": self.ignore_forked_repos,
             "ignore_archived_repos": self.ignore_archived_repos,
             "stat_upload_url": self.stat_upload_url,

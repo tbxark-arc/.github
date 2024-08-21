@@ -585,7 +585,7 @@ async def main() -> None:
     """
     Used mostly for testing; this module is not usually run standalone
     """
-    with open('./status/config.json', 'r') as f:
+    with open('config.json', 'r') as f:
         config = json.load(f)
         async with aiohttp.ClientSession() as session:
             s = Stats(

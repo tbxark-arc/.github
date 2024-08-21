@@ -250,6 +250,14 @@ query {{
   }}
 }}
 """
+    
+
+def lowercase_set(s: Set[str]) -> Set[str]:
+    """
+    :param s: set of strings
+    :return: set of strings, all lowercase
+    """
+    return {x.lower() for x in s}
 
 
 class Stats(object):
@@ -272,10 +280,10 @@ class Stats(object):
         self.username = username
         self._ignore_forked_repos = ignore_forked_repos
         self._ignore_archived_repos = ignore_archived_repos
-        self._exclude_repos = set() if exclude_repos is None else exclude_repos
-        self._exclude_langs = set() if exclude_langs is None else exclude_langs
-        self._exclude_users = set() if exclude_users is None else exclude_users
-        self._include_users = set() if include_users is None else include_users
+        self._exclude_repos = set() if exclude_repos is None else lowercase_set(exclude_repos)
+        self._exclude_langs = set() if exclude_langs is None else lowercase_set(exclude_langs)
+        self._exclude_users = set() if exclude_users is None else lowercase_set(exclude_users)
+        self._include_users = set() if include_users is None else lowercase_set(include_users)
         self.queries = Queries(username, access_token, session)
 
         self._name: Optional[str] = None
@@ -355,7 +363,7 @@ Languages:
                 if repo is None:
                     continue
 
-                name = repo.get("nameWithOwner")
+                name = repo.get("nameWithOwner").lower()
                 owner = name.split("/")[0]
 
                 if self._include_users and owner not in self._include_users:

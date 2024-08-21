@@ -426,17 +426,7 @@ Languages:
         
         if self._stat_url is not None and len(stat_data) > 0:
             try:
-                report = {
-                    "stat_data": stat_data,
-                    "username": self.username,
-                    "exclude_repos": list(self._exclude_repos),
-                    "exclude_langs": list(self._exclude_langs),
-                    "exclude_users": list(self._exclude_users),
-                    "include_users": list(self._include_users),
-                    "ignore_forked_repos": self._ignore_forked_repos,
-                    "ignore_archived_repos": self._ignore_archived_repos,
-                }
-                json_text = json.dumps(report, indent=4)
+                json_text = json.dumps(stat_data, indent=4)
                 r = requests.post(self._stat_url, data=json_text)
                 print("Uploaded stats response", r.status_code, r.text)
             except Exception as e:

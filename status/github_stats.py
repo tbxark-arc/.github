@@ -147,6 +147,9 @@ class Queries(object):
           totalCount
         }}
         forkCount
+        isFork
+        isArchived
+        isPrivate
         languages(first: 10, orderBy: {{field: SIZE, direction: DESC}}) {{
           edges {{
             size
@@ -183,6 +186,9 @@ class Queries(object):
           totalCount
         }}
         forkCount
+        isFork
+        isArchived
+        isPrivate
         languages(first: 10, orderBy: {{field: SIZE, direction: DESC}}) {{
           edges {{
             size
@@ -571,18 +577,21 @@ async def main() -> None:
     """
     Used mostly for testing; this module is not usually run standalone
     """
-    access_token = os.getenv("ACCESS_TOKEN")
-    user = os.getenv("CUSTOM_ACTOR")
-    if user is None:
-        user = os.getenv("GITHUB_ACTOR")
-    print(access_token, user)
-    if access_token is None or user is None:
-        raise RuntimeError(
-            "ACCESS_TOKEN and GITHUB_ACTOR environment variables cannot be None!"
-        )
-    async with aiohttp.ClientSession() as session:
-        s = Stats(user, access_token, session)
-        print(await s.get_stats())
+    with open('./status/config.json', 'r') as f:
+        config = json.load(f)
+        async with aiohttp.ClientSession() as session:
+            s = Stats(
+                config['username'],
+                config['access_token'],
+                session,
+                exclude_repos=config['exclude_repos'],
+                exclude_langs=config['exclude_langs'],
+                exclude_users=config['exclude_users'],
+                include_users=config['include_users'],
+                ignore_forked_repos=config['ignore_forked_repos'],
+                ignore_archived_repos=config['ignore_archived_repos'],
+            )
+            print(await s.get_stats())
 
 
 if __name__ == "__main__":

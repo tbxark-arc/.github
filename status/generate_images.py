@@ -7,6 +7,7 @@ import re
 import aiohttp
 
 from github_stats import Stats
+from env_vars import EnvVars
 
 
 ################################################################################
@@ -99,58 +100,20 @@ async def main() -> None:
     """
     Generate all badges
     """
-    access_token = os.getenv("ACCESS_TOKEN")
-    if not access_token:
-        # access_token = os.getenv("GITHUB_TOKEN")
-        raise Exception("A personal access token is required to proceed!")
-    user = os.getenv("CUSTOM_ACTOR")
-    if user is None:
-        user = os.getenv("GITHUB_ACTOR")
-    if user is None:
-        raise RuntimeError("Environment variable CUSTOM_ACTOR must be set.")
-    exclude_repos = os.getenv("EXCLUDED")
-    excluded_repos = (
-        {x.strip() for x in exclude_repos.split(",")} if exclude_repos else None
-    )
-    exclude_langs = os.getenv("EXCLUDED_LANGS")
-    excluded_langs = (
-        {x.strip() for x in exclude_langs.split(",")} if exclude_langs else None
-    )
-    excluded_users = os.getenv("EXCLUDED_USERS")
-    excluded_users = (
-        {x.strip() for x in excluded_users.split(",")} if excluded_users else None
-    )
-    include_users = os.getenv("INCLUDE_USERS")
-    include_users = (
-        {x.strip() for x in include_users.split(",")} if include_users else None
-    )
-    # Convert a truthy value to a Boolean
-    raw_ignore_forked_repos = os.getenv("EXCLUDE_FORKED_REPOS")
-    ignore_forked_repos = (
-        not not raw_ignore_forked_repos
-        and raw_ignore_forked_repos.strip().lower() != "false"
-    )
-
-    raw_ignore_archived_repos = os.getenv("EXCLUDE_ARCHIVED_REPOS")
-    ignore_archived_repos = (
-        not not raw_ignore_archived_repos
-        and raw_ignore_archived_repos.strip().lower() != "false"
-    )
-
-    stat_upload_url = os.getenv("STAT_UPLOAD_URL")
+    vars = EnvVars()
 
     async with aiohttp.ClientSession() as session:
         s = Stats(
-            user,
-            access_token,
+            vars.user,
+            vars.access_token,
             session,
-            exclude_repos=excluded_repos,
-            exclude_langs=excluded_langs,
-            exclude_users=excluded_users,
-            include_users=include_users,
-            ignore_forked_repos=ignore_forked_repos,
-            ignore_archived_repos=ignore_archived_repos,
-            stat_url=stat_upload_url,
+            exclude_repos=vars.excluded_repos,
+            exclude_langs=vars.excluded_langs,
+            exclude_users=vars.excluded_users,
+            include_users=vars.included_users,
+            ignore_forked_repos=vars.ignore_forked_repos,
+            ignore_archived_repos=vars.ignore_archived_repos,
+            stat_url=vars.stat_upload_url,
         )
         await asyncio.gather(generate_languages(s), generate_overview(s))
 

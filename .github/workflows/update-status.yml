@@ -55,6 +55,7 @@ jobs:
         CUSTOM_ACTOR: ${{ secrets.CUSTOM_ACTOR }}
         EXCLUDED: ${{ secrets.EXCLUDED }}
         EXCLUDE_FORKED_REPOS: true
+        EXCLUDE_ARCHIVED_REPOS: true
         EXCLUDED_LANGS: ${{ secrets.EXCLUDED_LANGS }}
         EXCLUDED_USERS: ${{ secrets.EXCLUDED_USERS }}
         INCLUDED_USERS: ${{ secrets.INCLUDED_USERS }}

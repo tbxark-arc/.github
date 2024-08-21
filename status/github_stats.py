@@ -261,9 +261,11 @@ class Stats(object):
         exclude_users: Optional[Set] = None,
         include_users: Optional[Set] = None,
         ignore_forked_repos: bool = False,
+        ignore_archived_repos: bool = False,
     ):
         self.username = username
         self._ignore_forked_repos = ignore_forked_repos
+        self._ignore_archived_repos = ignore_archived_repos
         self._exclude_repos = set() if exclude_repos is None else exclude_repos
         self._exclude_langs = set() if exclude_langs is None else exclude_langs
         self._exclude_users = set() if exclude_users is None else exclude_users
@@ -355,6 +357,10 @@ Languages:
                 if self._exclude_users and owner in self._exclude_users:
                     continue
                 if name in self._repos or name in self._exclude_repos:
+                    continue
+                if self._ignore_forked_repos and repo.get("isFork", False):
+                    continue
+                if self._ignore_archived_repos and repo.get("isArchived", False):
                     continue
 
                 self._repos.add(name)

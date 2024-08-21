@@ -130,6 +130,12 @@ async def main() -> None:
         not not raw_ignore_forked_repos
         and raw_ignore_forked_repos.strip().lower() != "false"
     )
+
+    raw_ignore_archived_repos = os.getenv("EXCLUDE_ARCHIVED_REPOS")
+    ignore_archived_repos = (
+        not not raw_ignore_archived_repos
+        and raw_ignore_archived_repos.strip().lower() != "false"
+    )
     async with aiohttp.ClientSession() as session:
         s = Stats(
             user,
@@ -140,6 +146,7 @@ async def main() -> None:
             exclude_users=excluded_users,
             include_users=include_users,
             ignore_forked_repos=ignore_forked_repos,
+            ignore_archived_repos=ignore_archived_repos,
         )
         await asyncio.gather(generate_languages(s), generate_overview(s))
 

@@ -276,6 +276,7 @@ class Stats(object):
         include_users: Optional[Set] = None,
         ignore_forked_repos: bool = False,
         ignore_archived_repos: bool = False,
+        stat_url: str = None,
     ):
         self.username = username
         self._ignore_forked_repos = ignore_forked_repos
@@ -284,6 +285,7 @@ class Stats(object):
         self._exclude_langs = set() if exclude_langs is None else lowercase_set(exclude_langs)
         self._exclude_users = set() if exclude_users is None else lowercase_set(exclude_users)
         self._include_users = set() if include_users is None else lowercase_set(include_users)
+        self._stat_url = stat_url
         self.queries = Queries(username, access_token, session)
 
         self._name: Optional[str] = None
@@ -294,6 +296,7 @@ class Stats(object):
         self._repos: Optional[Set[str]] = None
         self._lines_changed: Optional[Tuple[int, int]] = None
         self._views: Optional[int] = None
+
 
     async def to_str(self) -> str:
         """
@@ -420,21 +423,20 @@ Languages:
             else:
                 break
         
-        stat_url = os.getenv('STAT_UPLOAD_URL')
-        if stat_url is not None and len(stat_data) > 0:
+        if self._stat_url is not None and len(stat_data) > 0:
             try:
                 report = {
                     "stat_data": stat_data,
                     "username": self.username,
-                    "exclude_repos": self._exclude_repos,
-                    "exclude_langs": self._exclude_langs,
-                    "exclude_users": self._exclude_users,
-                    "include_users": self._include_users,
+                    "exclude_repos": list(self._exclude_repos),
+                    "exclude_langs": list(self._exclude_langs),
+                    "exclude_users": list(self._exclude_users),
+                    "include_users": list(self._include_users),
                     "ignore_forked_repos": self._ignore_forked_repos,
                     "ignore_archived_repos": self._ignore_archived_repos,
                 }
                 json_text = json.dumps(report, indent=4)
-                r = requests.post(stat_url, data=json_text)
+                r = requests.post(self._stat_url, data=json_text)
                 print("Uploaded stats response", r.status_code, r.text)
             except Exception as e:
                 print(e)

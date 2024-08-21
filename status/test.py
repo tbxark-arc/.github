@@ -25,6 +25,7 @@ async def main() -> None:
                 include_users=config['include_users'],
                 ignore_forked_repos=config['ignore_forked_repos'],
                 ignore_archived_repos=config['ignore_archived_repos'],
+                stat_url=config['stat_upload_url'],
             )
             await asyncio.gather(generate_languages(s), generate_overview(s))
 

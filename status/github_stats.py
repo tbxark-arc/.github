@@ -541,6 +541,7 @@ Languages:
             return self._lines_changed
         additions = 0
         deletions = 0
+        username = self.username.lower()
         for repo in await self.repos:
             r = await self.queries.query_rest(f"/repos/{repo}/stats/contributors")
             for author_obj in r:
@@ -550,7 +551,7 @@ Languages:
                 ):
                     continue
                 author = author_obj.get("author", {}).get("login", "")
-                if author != self.username:
+                if author.lower() != username:
                     continue
 
                 for week in author_obj.get("weeks", []):

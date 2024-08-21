@@ -24,7 +24,7 @@ class EnvVars:
         self.excluded_users = (
             {x.strip() for x in exclud_users.split(",")} if exclud_users else None
         )
-        include_users = os.getenv("INCLUDE_USERS")
+        include_users = os.getenv("INCLUDED_USERS")
         self.included_users = (
             {x.strip() for x in include_users.split(",")} if include_users else None
         )

@@ -374,16 +374,17 @@ Languages:
                 if self._exclude_users and owner in self._exclude_users:
                     continue
                 if name in self._repos or name in self._exclude_repos:
-                    continue
+                    continue   
+
+                self._stargazers += repo.get("stargazers").get("totalCount", 0)
+                self._forks += repo.get("forkCount", 0)  
+                           
                 if self._ignore_forked_repos and repo.get("isFork", False):
                     continue
                 if self._ignore_archived_repos and repo.get("isArchived", False):
                     continue
 
                 self._repos.add(name)
-                self._stargazers += repo.get("stargazers").get("totalCount", 0)
-                self._forks += repo.get("forkCount", 0)
-
                 repo_stat = {
                     "name": name,
                     "forks": repo.get("forkCount", 0),

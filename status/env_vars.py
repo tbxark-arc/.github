@@ -4,14 +4,20 @@ import requests
 
 class EnvVars:
     def __init__(self):
+        # load token
         self.access_token = os.getenv("ACCESS_TOKEN")
-        if not self.access_token:
-            raise Exception("A personal access token is required to proceed!")
+        if not self._validate_token(self.access_token):
+            self.access_token = os.getenv("GITHUB_TOKEN")
+            if not self._validate_token(self.access_token):
+                raise Exception("No valid access token found! Please set either ACCESS_TOKEN or GITHUB_TOKEN.")
+        
+        # load user
         self.user = os.getenv("CUSTOM_ACTOR")
         if self.user is None:
             user = os.getenv("GITHUB_ACTOR")
-        if self.user is None:
-            raise RuntimeError("Environment variable CUSTOM_ACTOR must be set.")
+            if self.user is None:
+                raise RuntimeError("Environment variable CUSTOM_ACTOR must be set.")
+
         exclude_repos = os.getenv("EXCLUDED")
         self.excluded_repos = (
             {x.strip() for x in exclude_repos.split(",")} if exclude_repos else None
@@ -43,6 +49,17 @@ class EnvVars:
 
         self.stat_upload_url = os.getenv("STAT_UPLOAD_URL")
         
+    def _validate_token(self, token):
+        """Validate if the given GitHub token is valid by making a test request."""
+        if not token:
+            return False
+        headers = {'Authorization': f'token {token}'}
+        try:
+            response = requests.get('https://api.github.com/user', headers=headers)
+            return response.status_code == 200
+        except:
+            return False
+
     def to_dict(self):
         return {
             "access_token": self.access_token,
